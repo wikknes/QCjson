@@ -1,0 +1,25 @@
+{
+  "experiment_id": "quantum_exp_001",
+  "device": "Quantum_Processor_v2",
+  "qubits": 4,
+  "readout_fidelity": 0.98,
+  "gate_fidelity": 0.995,
+  "timestamps": [1617293571, 1617293572, 1617293573, 1617293574, 1617293575],
+  "qubit_states": [
+    [0.707, 0.707, 0, 0],
+    [0, 0, 0.707, 0.707],
+    [0.5, 0.5, 0.5, 0.5]
+  ],
+  "measurement_results": [0, 1, 1, 0, 1, 0, 0, 1],
+  "temperature_data": {
+    "fridge": 0.015,
+    "chip": 0.022,
+    "ambient": 293.15
+  },
+  "gate_sequence": [
+    {"gate": "h", "target": 0},
+    {"gate": "cx", "control": 0, "target": 1},
+    {"gate": "h", "target": 2},
+    {"gate": "cx", "control": 2, "target": 3}
+  ]
+}

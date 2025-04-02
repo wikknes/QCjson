@@ -227,13 +227,16 @@ json_string = qjson.to_json()
 
 # Create QJson object from JSON string
 loaded_qjson = QJson.from_json(json_string)
+
+# Convert QJson data back to standard JSON
+standard_json_data = qjson.decode(encoded_data)
 ```
 
-These functions help you save QJson data to files or transmit it over networks.
+These functions help you save QJson data to files, transmit it over networks, and convert between QJson and standard JSON formats.
 
 ### Command-line Conversion
 
-QJson includes a command-line tool to convert existing JSON or CSV files:
+QJson includes command-line tools to convert between QJson and standard formats:
 
 ```bash
 # Convert a JSON file to QJson
@@ -241,6 +244,12 @@ python convert_to_qjson.py data.json --output data.qjson
 
 # Convert a CSV file to QJson
 python convert_to_qjson.py data.csv --output data.qjson --delimiter ','
+
+# Convert a QJson file back to JSON
+python convert_from_qjson.py data.qjson --output data.json
+
+# Convert a QJson file to CSV
+python convert_from_qjson.py data.qjson --output data.csv --delimiter ','
 ```
 
 ## Advanced Features

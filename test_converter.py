@@ -16,6 +16,11 @@ from convert_to_qjson import (
     convert_to_qjson,
     save_qjson_file
 )
+from convert_from_qjson import (
+    read_qjson_file,
+    convert_to_json,
+    save_json_file
+)
 
 class TestConverter(unittest.TestCase):
     """Test cases for QJson converter functionality"""
@@ -49,6 +54,18 @@ class TestConverter(unittest.TestCase):
         # Output file paths
         self.json_output = self.temp_path / "test_json.qjson"
         self.csv_output = self.temp_path / "test_csv.qjson"
+        
+        # Paths for converted QJson back to JSON
+        self.json_reconverted = self.temp_path / "reconverted.json"
+        
+        # Create a QJson file for testing conversion back to standard formats
+        qjson = QJson(quantum_bits=6, compression_level=0.6)
+        encoded_data = qjson.encode(self.json_data)
+        qjson_str = qjson.to_json()
+        
+        self.test_qjson_file = self.temp_path / "test_direct.qjson"
+        with open(self.test_qjson_file, 'w') as f:
+            f.write(qjson_str)
     
     def tearDown(self):
         """Clean up after tests"""
@@ -157,6 +174,75 @@ class TestConverter(unittest.TestCase):
         # PCA compression might alter values slightly, so we check approximately
         self.assertAlmostEqual(decoded_data["value1"][0], 10, delta=1)
         self.assertAlmostEqual(decoded_data["value2"][0], 0.1, delta=0.05)
+
+
+    def test_qjson_to_json_conversion(self):
+        """Test converting from QJson back to standard JSON format"""
+        # Read the QJson file
+        qjson_result = read_qjson_file(self.test_qjson_file)
+        qjson_obj = qjson_result["qjson_obj"]
+        qjson_data = qjson_result["qjson_data"]
+        
+        # Convert to standard JSON
+        json_data = convert_to_json(qjson_obj, qjson_data)
+        
+        # Verify conversion preserved all keys
+        self.assertEqual(set(self.json_data.keys()), set(json_data.keys()))
+        
+        # Check specific values
+        self.assertEqual(json_data["id"], self.json_data["id"])
+        
+        # Check arrays (numeric arrays may have slight differences due to compression)
+        self.assertEqual(len(json_data["values"]), len(self.json_data["values"]))
+        for i in range(len(self.json_data["values"])):
+            self.assertAlmostEqual(json_data["values"][i], self.json_data["values"][i], delta=0.1)
+        
+        # Check nested structure
+        self.assertIn("nested", json_data)
+        self.assertIn("data", json_data["nested"])
+        self.assertEqual(len(json_data["nested"]["data"]), len(self.json_data["nested"]["data"]))
+        
+        # Save the converted JSON to a file
+        save_json_file(json_data, self.json_reconverted)
+        self.assertTrue(os.path.exists(self.json_reconverted))
+        
+        # Verify saved file content
+        with open(self.json_reconverted, 'r') as f:
+            loaded_json = json.load(f)
+        
+        self.assertEqual(loaded_json["id"], self.json_data["id"])
+    
+    def test_round_trip_conversion(self):
+        """Test complete round-trip: JSON → QJson → JSON"""
+        # Step 1: JSON → QJson
+        qjson_str = convert_to_qjson(
+            self.json_data,
+            quantum_bits=4,
+            compression_level=0.7
+        )
+        
+        # Save to file
+        qjson_file = self.temp_path / "roundtrip.qjson"
+        save_qjson_file(qjson_str, qjson_file)
+        
+        # Step 2: QJson → JSON
+        qjson_result = read_qjson_file(qjson_file)
+        qjson_obj = qjson_result["qjson_obj"]
+        qjson_data = qjson_result["qjson_data"]
+        
+        json_data = convert_to_json(qjson_obj, qjson_data)
+        
+        # Save reconverted data
+        reconverted_file = self.temp_path / "roundtrip.json"
+        save_json_file(json_data, reconverted_file)
+        
+        # Verify round-trip preserved the data
+        self.assertEqual(set(self.json_data.keys()), set(json_data.keys()))
+        self.assertEqual(json_data["id"], self.json_data["id"])
+        
+        # Nested structures should be preserved
+        self.assertIn("nested", json_data)
+        self.assertIn("data", json_data["nested"])
 
 
 if __name__ == "__main__":

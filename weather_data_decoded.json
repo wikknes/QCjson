@@ -1,0 +1,43 @@
+{
+  "metadata": {
+    "dataset": "Daily Weather Records",
+    "location": "San Francisco, CA",
+    "time_period": "Jan-Dec 2023",
+    "units": "metric"
+  },
+  "daily_records": [
+    {
+      "date": "2023-01-01",
+      "temperature": 12.5,
+      "humidity": 65,
+      "pressure": 1015.2,
+      "precipitation": 0.0,
+      "wind_speed": 8.3,
+      "wind_direction": "NE"
+    },
+    {
+      "date": "2023-01-02",
+      "temperature": 14.2,
+      "humidity": 68,
+      "pressure": 1012.8,
+      "precipitation": 2.3,
+      "wind_speed": 10.1,
+      "wind_direction": "NW"
+    },
+    {
+      "date": "2023-01-03",
+      "temperature": 13.8,
+      "humidity": 70,
+      "pressure": 1011.5,
+      "precipitation": 5.2,
+      "wind_speed": 12.7,
+      "wind_direction": "W"
+    }
+  ],
+  "statistics": {
+    "avg_temperature": 13.5,
+    "max_temperature": 14.2,
+    "min_temperature": 12.5,
+    "total_precipitation": 7.5
+  }
+}

@@ -132,6 +132,90 @@ def direct_qjson_to_json_example():
     print("Direct conversion complete - no files were read or written in this example")
 
 
+def weather_data_example():
+    """Example of converting weather data to and from QJson format"""
+    print("\n=== Converting Weather Dataset to QJson and back ===")
+    
+    # Create sample weather data (non-quantum related)
+    weather_data = {
+        "metadata": {
+            "dataset": "Daily Weather Records",
+            "location": "San Francisco, CA",
+            "time_period": "Jan-Dec 2023",
+            "units": "metric"
+        },
+        "daily_records": [
+            {
+                "date": "2023-01-01",
+                "temperature": 12.5,
+                "humidity": 65,
+                "pressure": 1015.2,
+                "precipitation": 0.0,
+                "wind_speed": 8.3,
+                "wind_direction": "NE"
+            },
+            {
+                "date": "2023-01-02",
+                "temperature": 14.2,
+                "humidity": 68,
+                "pressure": 1012.8,
+                "precipitation": 2.3,
+                "wind_speed": 10.1,
+                "wind_direction": "NW"
+            },
+            {
+                "date": "2023-01-03",
+                "temperature": 13.8,
+                "humidity": 70,
+                "pressure": 1011.5,
+                "precipitation": 5.2,
+                "wind_speed": 12.7,
+                "wind_direction": "W"
+            }
+        ],
+        "statistics": {
+            "avg_temperature": 13.5,
+            "max_temperature": 14.2,
+            "min_temperature": 12.5,
+            "total_precipitation": 7.5
+        }
+    }
+    
+    print(f"Original weather data has {len(weather_data)} main sections")
+    print(f"Contains {len(weather_data['daily_records'])} daily records")
+    
+    # Create QJson object and encode the data
+    qjson = QJson(quantum_bits=6, compression_level=0.7, compression_algorithm="zlib")
+    encoded_weather = qjson.encode(weather_data)
+    
+    # Convert to a JSON string to show the QJson format
+    qjson_str = json.dumps(encoded_weather)
+    
+    print(f"QJson encoded data size: {len(qjson_str)} bytes")
+    print(f"Compression algorithm: {encoded_weather['metadata']['quantum_parameters']['algorithm']}")
+    
+    # Save the QJson data
+    with open("weather_data.qjson", "w") as f:
+        f.write(qjson_str)
+    print("Saved QJson data to 'weather_data.qjson'")
+    
+    # Decode back to standard format
+    decoded_weather = qjson.decode(encoded_weather)
+    
+    # Verify data is preserved
+    print(f"Decoded data has {len(decoded_weather)} main sections")
+    print(f"Contains {len(decoded_weather['daily_records'])} daily records")
+    
+    # Check if structure and values match
+    print(f"First record temperature: Original={weather_data['daily_records'][0]['temperature']}, Decoded={decoded_weather['daily_records'][0]['temperature']}")
+    print(f"Metadata preserved: {weather_data['metadata'] == decoded_weather['metadata']}")
+    
+    # Save the decoded data as standard JSON
+    with open("weather_data_decoded.json", "w") as f:
+        json.dump(decoded_weather, f, indent=2)
+    print("Saved decoded data to 'weather_data_decoded.json'")
+
+
 if __name__ == "__main__":
     import random
     import time
@@ -139,4 +223,5 @@ if __name__ == "__main__":
     convert_json_example()
     convert_csv_example()
     direct_qjson_to_json_example()
+    weather_data_example()
     print("\nConversion examples completed successfully.")

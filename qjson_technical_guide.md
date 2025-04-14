@@ -35,6 +35,95 @@ QJson produces a structured format with:
    - Quantum circuit definitions (when applicable)
    - Error correction codes (when enabled)
 
+### QJSON Structure Example
+
+Below is an example QJSON file structure showing the key elements:
+
+```json
+{
+  "metadata": {
+    "id": "783b2543-5c8a-482a-96b3-758e673fff29",
+    "created": 1743611780.5548239, 
+    "modified": 1743611780.5554502,
+    "schema_version": "1.1",
+    "quantum_parameters": {
+      "bits": 8,
+      "compression": 0.7,
+      "algorithm": "pca",
+      "error_correction": false,
+      "quantum_safe_crypto": true
+    }
+  },
+  "data": {
+    "sample_id": ["Q001", "Q002", "Q003", "Q004", "Q005", "Q006", "Q007", "Q008", "Q009", "Q010"],
+    "qubit_count": {
+      "quantum_compressed": true,
+      "algorithm": "pca",
+      "compressed_data": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+      "quantum_parameters": {
+        "algorithm": "pca",
+        "mean": 4.0,
+        "scale": 1.0,
+        "original_size": 10
+      },
+      "compression_quality": 0.0
+    },
+    "energy_level": {
+      "quantum_compressed": true,
+      "algorithm": "pca",
+      "compressed_data": [-1.0046620299346933, 1.2279202588090974, -0.16744367165577811, -1.8418803882136212, 0.39070190053016957, 0.9488474727161172, -0.7255892438417257],
+      "quantum_parameters": {
+        "algorithm": "pca",
+        "mean": 2.5759999999999996,
+        "scale": 0.03583294573433786,
+        "original_size": 10
+      },
+      "compression_quality": 1.045838896306187
+    },
+    "quantum_integrity": {
+      "quantum_checksum": "e35e81d05f93839ac99f0dd4cf67137a715806d15c052610650c74b97a321816",
+      "classical_checksum": "262ac6ba7adbc9571aad5470dd309fc901e9efbe5a24d628db47034d3125a19c",
+      "checksum_type": "post_quantum",
+      "timestamp": 1743611780.555449
+    }
+  }
+}
+```
+
+#### Structure Explanation
+
+Let's break down the key components of the QJSON format:
+
+1. **Metadata Section** (`metadata`):
+   - Unique identifier (`id`): A UUID for the dataset
+   - Timestamps: Creation and modification times
+   - Schema version: Format specification version
+   - Quantum parameters: Configuration details for quantum processing
+     - Number of quantum bits used
+     - Compression ratio (0.0-1.0)
+     - Algorithm selection (e.g., "pca")
+     - Error correction and crypto flags
+
+2. **Data Section** (`data`):
+   - **Regular data**: Simple arrays or non-compressed values (e.g., `sample_id`)
+   - **Compressed data fields**: For each compressed field (e.g., `qubit_count`, `energy_level`):
+     - `quantum_compressed` flag: Indicates compression is applied
+     - `algorithm`: The compression approach used
+     - `compressed_data`: The actual compressed values (reduced dimensionality)
+     - `quantum_parameters`: Information needed for decompression
+       - `mean`: Original data mean (for centering)
+       - `scale`: Scaling factor
+       - `original_size`: Original data dimensions
+     - `compression_quality`: Measurement of compression effectiveness
+
+3. **Integrity Block** (`quantum_integrity`):
+   - `quantum_checksum`: Quantum-resistant checksum
+   - `classical_checksum`: Traditional checksum
+   - `checksum_type`: Algorithm used for checksums
+   - `timestamp`: When verification was performed
+
+The format enables efficient storage while preserving enough information to accurately reconstruct the original data.
+
 ## Conversion Principles
 
 ### Data Type Preservation
